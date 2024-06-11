@@ -8,7 +8,7 @@ packets = require('packets')
 _addon.name = 'lazy'
 _addon.author = 'Brax'
 _addon.version = '0.5'
-_addon.commands = {'lazy'}
+_addon.commands = {'lazy','lz'}
 
 Start_Engine = true
 isCasting = false
@@ -104,12 +104,21 @@ function TurnToTarget()
 	end
 end
 
+function isMob(id)
+    m = windower.ffxi.get_mob_by_id(id)
+    if m and m['spawn_type']==16 and m['hpp'] >0 then
+        return true
+    end
+    return false
+end
+
 function Find_Nearest_Target(target)
 	local id_targ = -1
 	local dist_targ = -1
 	local marray = windower.ffxi.get_mob_array()
 	for key,mob in pairs(marray) do
-		if string.lower(mob["name"]) == string.lower(target) and mob["valid_target"] and mob["hpp"] == 100 then
+		if ((target == '' and isMob(mob['id'])) or string.lower(mob["name"]) == string.lower(target))
+            and mob["valid_target"] and mob["hpp"] == 100 then
 			if dist_targ == -1 then
 				id_targ = key
 				dist_targ = math.sqrt(mob["distance"])
