@@ -61,6 +61,7 @@ windower.register_event('addon command', function (...)
 	elseif args[1] == "stop" then
 		windower.add_to_chat(2,"....Stopping Lazy Helper....")
 		Start_Engine = false
+        windower.ffxi.run(false)
 	elseif args[1] == "reload" then
 		windower.add_to_chat(2,"....Reloading Config....")
 		config.reload(settings)
@@ -118,7 +119,7 @@ function Find_Nearest_Target(target)
 	local marray = windower.ffxi.get_mob_array()
 	for key,mob in pairs(marray) do
 		if ((target == '' and isMob(mob['id'])) or string.lower(mob["name"]) == string.lower(target))
-            and mob["valid_target"] and mob["hpp"] == 100 then
+            and mob["valid_target"] and mob["hpp"] >0 then
 			if dist_targ == -1 then
 				id_targ = key
 				dist_targ = math.sqrt(mob["distance"])
@@ -170,9 +171,10 @@ function Combat()
 			Cast_Spell(settings.spell)
 		end
 	elseif settings.autotarget == true then
-		if Find_Nearest_Target(settings.target) > 0 then
-			windower.ffxi.follow(Find_Nearest_Target(settings.target))
-			if math.sqrt(windower.ffxi.get_mob_by_index(Find_Nearest_Target(settings.target)).distance) < 3 then
+		local nearest_target = Find_Nearest_Target(settings.target)
+		if nearest_target > 0 then
+			windower.ffxi.follow(nearest_target)
+			if math.sqrt(windower.ffxi.get_mob_by_index(nearest_target).distance) < 4 then
 				windower.send_command("input /targetbnpc")
 				windower.send_command("input /attack on")
 			end
