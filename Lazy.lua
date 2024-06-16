@@ -179,7 +179,7 @@ function Combat()
 		local nearest_target = Find_Nearest_Target(settings.target)
 		if nearest_target > 0 and Start_Engine then
 			windower.ffxi.follow(nearest_target)
-			if math.sqrt(windower.ffxi.get_mob_by_index(nearest_target).distance) < 4 then
+			if math.sqrt(windower.ffxi.get_mob_by_index(nearest_target).distance) < 5 then
 				windower.send_command("input /targetbnpc")
 				windower.send_command("input /attack on")
 			end
