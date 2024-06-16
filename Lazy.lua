@@ -62,6 +62,7 @@ windower.register_event('addon command', function (...)
 		windower.add_to_chat(2,"....Stopping Lazy Helper....")
 		Start_Engine = false
         windower.ffxi.run(false)
+        windower.ffxi.follow()
 	elseif args[1] == "reload" then
 		windower.add_to_chat(2,"....Reloading Config....")
 		config.reload(settings)
@@ -134,7 +135,7 @@ end
 
 function Check_Distance()
 	local distance = windower.ffxi.get_mob_by_target('t').distance:sqrt()
-	if distance > 3 then
+	if distance > 3 and Start_Engine then
 		TurnToTarget()
 		windower.ffxi.run()
 	else
@@ -146,6 +147,10 @@ function test()
 end
 
 function Engine()
+	if not Start_Engine then 
+        windower.ffxi.run(false)
+        return 
+    end
 	Buffs = windower.ffxi.get_player()["buffs"]
     table.reassign(buffactive,convert_buff_list(Buffs))
 
@@ -172,12 +177,14 @@ function Combat()
 		end
 	elseif settings.autotarget == true then
 		local nearest_target = Find_Nearest_Target(settings.target)
-		if nearest_target > 0 then
+		if nearest_target > 0 and Start_Engine then
 			windower.ffxi.follow(nearest_target)
 			if math.sqrt(windower.ffxi.get_mob_by_index(nearest_target).distance) < 4 then
 				windower.send_command("input /targetbnpc")
 				windower.send_command("input /attack on")
 			end
+        elseif not Start_Engine then
+            windower.ffxi.run(false)
 		end
 	end
 end
@@ -242,3 +249,7 @@ function convert_buff_list(bufflist)
     end
     return buffarr
 end
+
+windower.register_event('unload', function()
+    windower.ffxi.run(false)
+end)
