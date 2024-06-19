@@ -4,6 +4,7 @@ require('tables')
 config = require('config')
 res = require('resources')
 packets = require('packets')
+require('coroutine')
 
 _addon.name = 'lazy'
 _addon.author = 'Brax'
@@ -61,8 +62,7 @@ windower.register_event('addon command', function (...)
 	elseif args[1] == "stop" then
 		windower.add_to_chat(2,"....Stopping Lazy Helper....")
 		Start_Engine = false
-        windower.ffxi.run(false)
-        windower.ffxi.follow()
+        stop()
 	elseif args[1] == "reload" then
 		windower.add_to_chat(2,"....Reloading Config....")
 		config.reload(settings)
@@ -148,7 +148,7 @@ end
 
 function Engine()
 	if not Start_Engine then 
-        windower.ffxi.run(false)
+        stop()
         return 
     end
 	Buffs = windower.ffxi.get_player()["buffs"]
@@ -184,7 +184,7 @@ function Combat()
 				windower.send_command("input /attack on")
 			end
         elseif not Start_Engine then
-            windower.ffxi.run(false)
+            stop()
 		end
 	end
 end
@@ -250,6 +250,12 @@ function convert_buff_list(bufflist)
     return buffarr
 end
 
-windower.register_event('unload', function()
+function stop()
     windower.ffxi.run(false)
+    -- windower.ffxi.follow()
+    windower.send_command('setkey r;wait 0.1;setkey r up;wait 0.1;setkey r;wait 0.1;setkey r up')
+end
+
+windower.register_event('unload', function()
+    stop()
 end)
