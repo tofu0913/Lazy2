@@ -114,12 +114,15 @@ function isMob(id)
     return false
 end
 
+--TODO, kill aggro
+--TODO, cant attack protect
 function Find_Nearest_Target(target)
 	local id_targ = -1
 	local dist_targ = -1
 	local marray = windower.ffxi.get_mob_array()
 	for key,mob in pairs(marray) do
 		if ((target == '' and isMob(mob['id'])) or string.lower(mob["name"]) == string.lower(target))
+		-- if string.lower(mob["name"]) == string.lower(target)
             and mob["valid_target"] and mob["hpp"] >0 then
 			if dist_targ == -1 then
 				id_targ = key
@@ -164,6 +167,21 @@ function Engine()
 	end
 end
 
+function setTarget(index)
+    local target = windower.ffxi.get_mob_by_index(index)
+    if not target then
+        return
+    end
+
+    local player = windower.ffxi.get_player()
+
+    packets.inject(packets.new('incoming', 0x058, {
+        ['Player'] = player.id,
+        ['Target'] = target.id,
+        ['Player Index'] = player.index,
+    }))
+end
+
 function Combat()
 	-- is Engaged / combat
 	if windower.ffxi.get_player().status == 1 then
@@ -179,8 +197,9 @@ function Combat()
 		local nearest_target = Find_Nearest_Target(settings.target)
 		if nearest_target > 0 and Start_Engine then
 			windower.ffxi.follow(nearest_target)
+            setTarget(nearest_target)
 			if math.sqrt(windower.ffxi.get_mob_by_index(nearest_target).distance) < 5 then
-				windower.send_command("input /targetbnpc")
+				-- windower.send_command("input /targetbnpc")
 				windower.send_command("input /attack on")
 			end
         elseif not Start_Engine then
