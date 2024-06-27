@@ -62,10 +62,12 @@ windower.register_event('addon command', function (...)
 		print("Help Info")
 	elseif args[1] == "start" then
 		windower.add_to_chat(2,"....Starting Lazy Helper....")
+        cleanAggro = false
 		Start_Engine = true
 		Engine()
 	elseif args[1] == "stop" then
 		windower.add_to_chat(2,"....Stopping Lazy Helper....")
+        cleanAggro = false
 		Start_Engine = false
         stop()
 	elseif args[1] == "reload" then
@@ -77,6 +79,7 @@ windower.register_event('addon command', function (...)
 		test()
 	elseif args[1] == "clean" then
         cleanAggro = true
+		-- windower.add_to_chat(2,"....Clean aggro....")
 	elseif args[1] == "show" then
 		windower.add_to_chat(11,"Autotarget: "..tostring(settings.autotarget))
 		windower.add_to_chat(11,"Spell: "..settings.spell)
@@ -129,9 +132,8 @@ function Find_Nearest_Target(target)
 	local dist_targ = -1
 	local marray = windower.ffxi.get_mob_array()
 	for key,mob in pairs(marray) do
-		-- if ((target == '' and isMob(mob['id'])) or string.lower(mob["name"]) == string.lower(target))
-		if ((target == '' and isMob(mob['id'])) or string.lower(mob["name"]) == string.lower(target) or isInAggro(mob.id))
-		-- if string.lower(mob["name"]) == string.lower(target)
+        if (cleanAggro and isInAggro(mob.id)) or 
+		 (not cleanAggro and ((target == '' and isMob(mob['id'])) or string.lower(mob["name"]) == string.lower(target) or isInAggro(mob.id)))
             and mob["valid_target"] and mob["hpp"] >0 then
 			if dist_targ == -1 then
 				id_targ = key
