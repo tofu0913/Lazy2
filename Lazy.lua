@@ -189,6 +189,7 @@ function setTarget(index)
         ['Target'] = target.id,
         ['Player Index'] = player.index,
     }))
+    windower.send_command('wait 1; input /lockon')
 end
 
 local targetLastChange = os.clock() - 2
