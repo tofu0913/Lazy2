@@ -191,6 +191,8 @@ function setTarget(index)
     }))
 end
 
+local targetLastChange = os.clock() - 2
+
 function Combat()
 	-- is Engaged / combat
 	if windower.ffxi.get_player().status == 1 then
@@ -204,12 +206,14 @@ function Combat()
 		end
 	elseif settings.autotarget == true then
 		local nearest_target = Find_Nearest_Target(settings.target)
-		if nearest_target > 0 and Start_Engine then
+		-- if nearest_target > 0 and Start_Engine then
+		if nearest_target > 0 and Start_Engine and (os.clock()-targetLastChange>4) then
 			windower.ffxi.follow(nearest_target)
             setTarget(nearest_target)
+            targetLastChange = os.clock()
 			if math.sqrt(windower.ffxi.get_mob_by_index(nearest_target).distance) < 5 then
 				-- windower.send_command("input /targetbnpc")
-				windower.send_command("input /attack on")
+				windower.send_command("wait 1.5;input /attack on")
 			end
         elseif not Start_Engine then
             stop()
