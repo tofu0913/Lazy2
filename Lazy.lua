@@ -5,6 +5,7 @@ config = require('config')
 res = require('resources')
 packets = require('packets')
 require('coroutine')
+require('aggro')
 
 _addon.name = 'lazy'
 _addon.author = 'Brax'
@@ -13,6 +14,7 @@ _addon.commands = {'lazy','lz'}
 
 Start_Engine = true
 isCasting = false
+cleanAggro = false
 isBusy = 0
 buffactive = {}
 Action_Delay = 2
@@ -30,6 +32,9 @@ defaults.target = ""
 settings = config.load(defaults)
 
 windower.register_event('incoming chunk', function(id, data)
+    -- Aggro tracker
+    handle_track_packet(id, data)
+
     if id == 0x028 then
         local action_message = packets.parse('incoming', data)
 		if action_message["Category"] == 4 then
@@ -70,6 +75,8 @@ windower.register_event('addon command', function (...)
 		config.save(settings,windower.ffxi.get_player().name)
 	elseif args[1] == "test" then
 		test()
+	elseif args[1] == "clean" then
+        cleanAggro = true
 	elseif args[1] == "show" then
 		windower.add_to_chat(11,"Autotarget: "..tostring(settings.autotarget))
 		windower.add_to_chat(11,"Spell: "..settings.spell)
@@ -77,6 +84,7 @@ windower.register_event('addon command', function (...)
 		windower.add_to_chat(11,"Weaponskill: "..settings.weaponskill)
 		windower.add_to_chat(11,"Use Weaponskill: "..tostring(settings.weaponskill_active))
 		windower.add_to_chat(11,"Target:"..settings.target)
+		windower.add_to_chat(11,"Is aggro:"..tostring(isAggrod()))
 	elseif args[1] == "autotarget" then
 		if args[2] == "on" then
 			settings.autotarget = true
@@ -121,7 +129,8 @@ function Find_Nearest_Target(target)
 	local dist_targ = -1
 	local marray = windower.ffxi.get_mob_array()
 	for key,mob in pairs(marray) do
-		if ((target == '' and isMob(mob['id'])) or string.lower(mob["name"]) == string.lower(target))
+		-- if ((target == '' and isMob(mob['id'])) or string.lower(mob["name"]) == string.lower(target))
+		if ((target == '' and isMob(mob['id'])) or string.lower(mob["name"]) == string.lower(target) or isInAggro(mob.id))
 		-- if string.lower(mob["name"]) == string.lower(target)
             and mob["valid_target"] and mob["hpp"] >0 then
 			if dist_targ == -1 then
@@ -277,4 +286,11 @@ end
 
 windower.register_event('unload', function()
     stop()
+end)
+
+
+
+windower.register_event('prerender', function(...)
+    -- Aggro tracker
+    clean_tracked_actions()
 end)
