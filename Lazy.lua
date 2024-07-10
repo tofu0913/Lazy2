@@ -125,15 +125,15 @@ function isMob(id)
     return false
 end
 
---TODO, kill aggro
 --TODO, cant attack protect
 function Find_Nearest_Target(target)
 	local id_targ = -1
 	local dist_targ = -1
 	local marray = windower.ffxi.get_mob_array()
 	for key,mob in pairs(marray) do
-        if (cleanAggro and isInAggro(mob.id)) or 
-		 (not cleanAggro and ((target == '' and isMob(mob['id'])) or string.lower(mob["name"]) == string.lower(target) or isInAggro(mob.id)))
+        if ((cleanAggro and isInAggro(mob.id)) or 
+        (settings.targetid and string.format('%.3X',mob.index)==settings.targetid) or 
+		 (not settings.targetid and not cleanAggro and ((target == '' and isMob(mob['id'])) or string.lower(mob["name"]) == string.lower(target) or isInAggro(mob.id))))
             and mob["valid_target"] and mob["hpp"] >0 then
 			if dist_targ == -1 then
 				id_targ = key
