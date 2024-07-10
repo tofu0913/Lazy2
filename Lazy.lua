@@ -133,7 +133,7 @@ function Find_Nearest_Target(target)
 	for key,mob in pairs(marray) do
         if ((cleanAggro and isInAggro(mob.id)) or 
         (settings.targetid and string.format('%.3X',mob.index)==settings.targetid) or 
-		 (not settings.targetid and not cleanAggro and ((target == '' and isMob(mob['id'])) or string.lower(mob["name"]) == string.lower(target) or isInAggro(mob.id))))
+		 (not cleanAggro and ((target == '' and isMob(mob['id'])) or string.lower(mob["name"]) == string.lower(target) or isInAggro(mob.id))))
             and mob["valid_target"] and mob["hpp"] >0 then
 			if dist_targ == -1 then
 				id_targ = key
