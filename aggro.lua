@@ -259,6 +259,18 @@ function handle_party_packets(id, data)
     end
 end
 
+function cache_party_member(p, party_number)
+    if p and p.mob then
+        party_members[p.mob.id] = {is_pc = true, party=party_number}
+        if p.mob.pet_index then
+            local pet = windower.ffxi.get_mob_by_index(p.mob.pet_index)
+            if pet then
+                party_members[pet.id] = {is_pet = true, owner = p.id, party=party_number}
+            end
+        end
+    end
+end
+
 function cache_party_members()
     party_members = {}
     local party = windower.ffxi.get_party()
