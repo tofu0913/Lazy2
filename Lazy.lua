@@ -31,9 +31,28 @@ defaults.target = ""
 
 settings = config.load(defaults)
 
+function handle_mob_dead(id, data, modified, injected, blocked)
+    if not settings.targetid then return end
+
+    if id == 0x29 then	-- Mob died
+        local p = packets.parse('incoming',data)
+        local target_id = p['Target'] --data:unpack('I',0x09)
+        local player_id = p['Actor'] 
+        local message_id = p['Message'] --data:unpack('H',0x19)%32768
+
+        -- 6 == actor defeats target, 20 == target falls to the ground
+        if player_id == windower.ffxi.get_player().id and message_id == 6 or message_id == 20 then
+            -- killedMob = windower.ffxi.get_mob_by_id(target_id).name
+            -- log('killed: '..killedMob..' by '..player_id)
+            windower.send_command('input //sw reset; input //sw start; ')
+        end
+    end
+end
+
 windower.register_event('incoming chunk', function(id, data)
     -- Aggro tracker
     handle_track_packet(id, data)
+    handle_mob_dead(id, data)
 
     if id == 0x028 then
         local action_message = packets.parse('incoming', data)
@@ -125,6 +144,16 @@ function isMob(id)
     return false
 end
 
+local function isTargetID(val)
+  for field in settings.targetid:gmatch('([^,]+)') do
+    -- log(field..' vs '..val)
+    if tostring(field) == tostring(val) then
+        return true
+    end
+  end
+  return false
+end
+
 --TODO, cant attack protect
 function Find_Nearest_Target(target)
 	local id_targ = -1
@@ -132,7 +161,8 @@ function Find_Nearest_Target(target)
 	local marray = windower.ffxi.get_mob_array()
 	for key,mob in pairs(marray) do
         if ((cleanAggro and isInAggro(mob.id)) or 
-        (settings.targetid and string.format('%.3X',mob.index)==settings.targetid) or 
+        (settings.targetid and isTargetID(string.format('%.3X',mob.index))) or 
+        -- (settings.targetid and settings.targetid == string.format('%.3X',mob.index)) or 
 		 (not cleanAggro and ((target == '' and isMob(mob['id'])) or string.lower(mob["name"]) == string.lower(target) or isInAggro(mob.id))))
             and mob["valid_target"] and mob["hpp"] >0 then
 			if dist_targ == -1 then

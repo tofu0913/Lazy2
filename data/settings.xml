@@ -2,14 +2,15 @@
 <settings>
     <global>
         <autotarget>false</autotarget>
-        <spell>Sinker Drill</spell>
+        <spell></spell>
         <spell_active>false</spell_active>
         <target />
-        <weaponskill>Expiacion</weaponskill>
-        <weaponskill_active>true</weaponskill_active>
+        <weaponskill></weaponskill>
+        <weaponskill_active>false</weaponskill_active>
     </global>
-    <baelfire>
+    <felicya>
         <autotarget>true</autotarget>
-        <target>rank eft</target>
-    </baelfire>
+        <target>La Velue</target>
+        <targetid>112,</targetid>
+    </felicya>
 </settings>
