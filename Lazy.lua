@@ -8,7 +8,7 @@ require('coroutine')
 require('aggro')
 
 _addon.name = 'lazy'
-_addon.author = 'Brax'
+_addon.author = 'Cliff, Based version by Brax'
 _addon.version = '0.5'
 _addon.commands = {'lazy','lz'}
 
@@ -240,13 +240,14 @@ function Combat()
 	elseif settings.autotarget == true then
 		local nearest_target = Find_Nearest_Target(settings.target)
 		-- if nearest_target > 0 and Start_Engine then
-		if nearest_target > 0 and Start_Engine and (os.clock()-targetLastChange>4) then
+		if nearest_target > 0 and Start_Engine and (os.clock()-targetLastChange>2) then
 			windower.ffxi.follow(nearest_target)
             setTarget(nearest_target)
             targetLastChange = os.clock()
 			if math.sqrt(windower.ffxi.get_mob_by_index(nearest_target).distance) < 5 then
 				-- windower.send_command("input /targetbnpc")
-				windower.send_command("wait 1.5;input /attack on")
+				-- windower.send_command("wait 1.5;input /attack on")
+				windower.send_command("input /attack on")
 			end
         elseif not Start_Engine then
             stop()
