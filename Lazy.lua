@@ -20,6 +20,10 @@ isBusy = 0
 buffactive = {}
 Action_Delay = 2
 
+local running = false
+local running_target = {}
+local running_target_dist = 2
+
 buffactive = {}
 
 defaults = {}
@@ -182,12 +186,15 @@ function Find_Nearest_Target(target)
 end
 
 function Check_Distance()
-	local distance = windower.ffxi.get_mob_by_target('t').distance:sqrt()
+    target = windower.ffxi.get_mob_by_target('t')
+	local distance = target.distance:sqrt()
 	if distance > 3 and Start_Engine then
 		TurnToTarget()
 		windower.ffxi.run()
-	else
-		windower.ffxi.run(false)
+        running_target = target
+        running = true
+	-- else
+		-- windower.ffxi.run(false)
 	end
 end
 
@@ -242,7 +249,8 @@ function Combat()
 		local nearest_target = Find_Nearest_Target(settings.target)
 		-- if nearest_target > 0 and Start_Engine then
 		if nearest_target > 0 and Start_Engine and (os.clock()-targetLastChange>2) then
-			windower.ffxi.follow(nearest_target)
+			-- windower.ffxi.follow(nearest_target)
+            target = windower.ffxi.get_mob_by_index(nearest_target)
             setTarget(target, false)
             targetLastChange = os.clock()
 			if usePull and math.sqrt(target.distance) > 7 and math.sqrt(target.distance) < 20 then
@@ -342,9 +350,29 @@ windower.register_event('unload', function()
     stop()
 end)
 
-
+function runtopos(x,y)
+	local self_vector = windower.ffxi.get_mob_by_index(windower.ffxi.get_player().index or 0)
+	local angle = (math.atan2((y - self_vector.y), (x - self_vector.x))*180/math.pi)*-1
+	windower.ffxi.run((angle):radian())
+end
 
 windower.register_event('prerender', function(...)
     -- Aggro tracker
     clean_tracked_actions()
+    
+    -- Auto run
+    if running then
+        pl = windower.ffxi.get_mob_by_index(windower.ffxi.get_player().index or 0)
+        if next(running_target) ~= nil then
+            local distance = math.sqrt(math.pow(pl.x-running_target.x,2) + math.pow(pl.y-running_target.y,2))
+            -- debug(distance)
+            if distance > running_target_dist then
+                runtopos(running_target.x, running_target.y)
+            else
+                windower.ffxi.run(false)
+                running = false
+                -- running_callback()
+            end
+        end
+    end
 end)
