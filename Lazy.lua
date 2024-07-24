@@ -23,6 +23,7 @@ Action_Delay = 2
 local running = false
 local running_target = {}
 local running_target_dist = 2
+local usePull = false
 
 buffactive = {}
 
@@ -34,10 +35,10 @@ defaults.weaponskill_active = false
 defaults.autotarget = false
 defaults.target = ""
 
+flag = false
 settings = config.load(defaults)
 
 function handle_mob_dead(id, data, modified, injected, blocked)
-    if not settings.targetid then return end
 
     if id == 0x29 then	-- Mob died
         local p = packets.parse('incoming',data)
@@ -46,10 +47,16 @@ function handle_mob_dead(id, data, modified, injected, blocked)
         local message_id = p['Message'] --data:unpack('H',0x19)%32768
 
         -- 6 == actor defeats target, 20 == target falls to the ground
-        if player_id == windower.ffxi.get_player().id and message_id == 6 or message_id == 20 then
+        if player_id == windower.ffxi.get_player().id and (message_id == 6 or message_id == 20) then
             -- killedMob = windower.ffxi.get_mob_by_id(target_id).name
             -- log('killed: '..killedMob..' by '..player_id)
-            windower.send_command('input //sw reset; input //sw start; ')
+            if settings.targetid then
+                windower.send_command('input //sw reset; input //sw start; ')
+            end
+            if flag then
+                windower.send_command('input //fsd c')
+                flag = false
+            end
         end
     end
 end
@@ -93,6 +100,7 @@ windower.register_event('addon command', function (...)
 		windower.add_to_chat(2,"....Stopping Lazy Helper....")
         cleanAggro = false
 		Start_Engine = false
+        usePull = false
         killAggro = true
         stop()
 	elseif args[1] == "reload" then
@@ -107,6 +115,9 @@ windower.register_event('addon command', function (...)
 		-- windower.add_to_chat(2,"....Clean aggro....")
 	elseif args[1] == "ignoreaggro" then
         killAggro = false
+	elseif args[1] == "pull" then
+        usePull = true
+        windower.add_to_chat(2,"....Use RA to pull....")
 	elseif args[1] == "show" then
 		windower.add_to_chat(11,"Autotarget: "..tostring(settings.autotarget))
 		windower.add_to_chat(11,"Spell: "..settings.spell)
@@ -182,6 +193,9 @@ function Find_Nearest_Target(target)
 			end
 		end
 	end
+    if usePull and dist_targ > 25 then
+        return 0
+    end
 	return(id_targ)
 end
 
@@ -253,7 +267,8 @@ function Combat()
             target = windower.ffxi.get_mob_by_index(nearest_target)
             setTarget(target, false)
             targetLastChange = os.clock()
-			if usePull and math.sqrt(target.distance) > 7 and math.sqrt(target.distance) < 20 then
+            -- log(math.sqrt(target.distance))
+            if usePull and math.sqrt(target.distance) > 7 and math.sqrt(target.distance) < 20 then
                 -- log('Pull')
                 TurnToTarget()
                 windower.send_command("input //fsd s; wait 1; input /ra <t>")
