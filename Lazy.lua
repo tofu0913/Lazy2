@@ -212,12 +212,7 @@ function Engine()
 	end
 end
 
-function setTarget(index)
-    local target = windower.ffxi.get_mob_by_index(index)
-    if not target then
-        return
-    end
-
+function setTarget(target, unlock)
     local player = windower.ffxi.get_player()
 
     packets.inject(packets.new('incoming', 0x058, {
@@ -225,7 +220,9 @@ function setTarget(index)
         ['Target'] = target.id,
         ['Player Index'] = player.index,
     }))
-    windower.send_command('wait 1; input /lockon')
+    if unlock then
+        windower.send_command('wait 1; input /lockon')
+    end
 end
 
 local targetLastChange = os.clock() - 2
@@ -246,13 +243,28 @@ function Combat()
 		-- if nearest_target > 0 and Start_Engine then
 		if nearest_target > 0 and Start_Engine and (os.clock()-targetLastChange>2) then
 			windower.ffxi.follow(nearest_target)
-            setTarget(nearest_target)
+            setTarget(target, false)
             targetLastChange = os.clock()
-			if math.sqrt(windower.ffxi.get_mob_by_index(nearest_target).distance) < 5 then
-				-- windower.send_command("input /targetbnpc")
-				-- windower.send_command("wait 1.5;input /attack on")
-				windower.send_command("input /attack on")
-			end
+			if usePull and math.sqrt(target.distance) > 7 and math.sqrt(target.distance) < 20 then
+                -- log('Pull')
+                TurnToTarget()
+                windower.send_command("input //fsd s; wait 1; input /ra <t>")
+                flag = true
+            elseif math.sqrt(target.distance) <= 7 then
+                -- log('Melee')
+                -- windower.send_command("input /targetbnpc")
+                -- windower.send_command("wait 1.5;input /attack on")
+                windower.send_command("input /attack on")
+            else
+                -- log('Approach')
+                running_target = target
+                if usePull then
+                    running_target_dist = 20
+                else
+                    running_target_dist = 2
+                end
+                running = true
+            end
         elseif not Start_Engine then
             stop()
 		end
