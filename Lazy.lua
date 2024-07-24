@@ -15,6 +15,7 @@ _addon.commands = {'lazy','lz'}
 Start_Engine = true
 isCasting = false
 cleanAggro = false
+killAggro = true
 isBusy = 0
 buffactive = {}
 Action_Delay = 2
@@ -88,6 +89,7 @@ windower.register_event('addon command', function (...)
 		windower.add_to_chat(2,"....Stopping Lazy Helper....")
         cleanAggro = false
 		Start_Engine = false
+        killAggro = true
         stop()
 	elseif args[1] == "reload" then
 		windower.add_to_chat(2,"....Reloading Config....")
@@ -99,6 +101,8 @@ windower.register_event('addon command', function (...)
 	elseif args[1] == "clean" then
         cleanAggro = true
 		-- windower.add_to_chat(2,"....Clean aggro....")
+	elseif args[1] == "ignoreaggro" then
+        killAggro = false
 	elseif args[1] == "show" then
 		windower.add_to_chat(11,"Autotarget: "..tostring(settings.autotarget))
 		windower.add_to_chat(11,"Spell: "..settings.spell)
@@ -163,7 +167,7 @@ function Find_Nearest_Target(target)
         if ((cleanAggro and isInAggro(mob.id)) or 
         (settings.targetid and isTargetID(string.format('%.3X',mob.index))) or 
         -- (settings.targetid and settings.targetid == string.format('%.3X',mob.index)) or 
-		 (not cleanAggro and ((target == '' and isMob(mob['id'])) or string.lower(mob["name"]) == string.lower(target) or isInAggro(mob.id))))
+		 (not cleanAggro and ((target == '' and isMob(mob['id'])) or string.lower(mob["name"]) == string.lower(target) or (killAggro and isInAggro(mob.id)))))
             and mob["valid_target"] and mob["hpp"] >0 then
 			if dist_targ == -1 then
 				id_targ = key
