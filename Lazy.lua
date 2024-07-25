@@ -47,7 +47,7 @@ function handle_mob_dead(id, data, modified, injected, blocked)
         local message_id = p['Message'] --data:unpack('H',0x19)%32768
 
         -- 6 == actor defeats target, 20 == target falls to the ground
-        if player_id == windower.ffxi.get_player().id and (message_id == 6 or message_id == 20) then
+        if message_id == 6 or message_id == 20 then
             -- killedMob = windower.ffxi.get_mob_by_id(target_id).name
             -- log('killed: '..killedMob..' by '..player_id)
             if settings.targetid then
