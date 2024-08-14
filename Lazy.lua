@@ -87,22 +87,39 @@ windower.register_event('outgoing chunk', function(id, data)
 	end
 end)
 
+function triggerStart()
+    windower.add_to_chat(2,"....Starting Lazy Helper....")
+    cleanAggro = false
+    Start_Engine = true
+    Engine()
+end
+
+function triggerStop()
+    windower.add_to_chat(2,"....Stopping Lazy Helper....")
+    cleanAggro = false
+    Start_Engine = false
+    usePull = false
+    killAggro = true
+    stop()
+end
+
 windower.register_event('addon command', function (...)
 	local args	= T{...}:map(string.lower)
 	if args[1] == nil or args[1] == "help" then
 		print("Help Info")
-	elseif args[1] == "start" then
-		windower.add_to_chat(2,"....Starting Lazy Helper....")
-        cleanAggro = false
-		Start_Engine = true
-		Engine()
-	elseif args[1] == "stop" then
-		windower.add_to_chat(2,"....Stopping Lazy Helper....")
-        cleanAggro = false
-		Start_Engine = false
-        usePull = false
-        killAggro = true
-        stop()
+    elseif S{'start','go','g'}:contains(args[1]) then
+		triggerStart()
+        
+    elseif S{'stop','s'}:contains(args[1]) then
+		triggerStop()
+    
+    elseif S{'trigger'}:contains(args[1]) then
+        if Start_Engine then
+            triggerStop()
+        else
+            triggerStart()
+        end
+
 	elseif args[1] == "reload" then
 		windower.add_to_chat(2,"....Reloading Config....")
 		config.reload(settings)
@@ -363,8 +380,12 @@ function stop()
     windower.send_command('setkey r;wait 0.1;setkey r up;wait 0.1;setkey r;wait 0.1;setkey r up')
 end
 
+windower.register_event('load', function()
+    windower.send_command('bind @l input //lz trigger')
+end)
 windower.register_event('unload', function()
     stop()
+    windower.send_command('unbind @l')
 end)
 
 function runtopos(x,y)
