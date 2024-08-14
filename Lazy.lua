@@ -12,7 +12,7 @@ _addon.author = 'Cliff, Based version by Brax'
 _addon.version = '0.5'
 _addon.commands = {'lazy','lz'}
 
-Start_Engine = true
+Start_Engine = false
 isCasting = false
 cleanAggro = false
 killAggro = true
