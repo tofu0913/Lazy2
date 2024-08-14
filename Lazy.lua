@@ -357,6 +357,8 @@ end
 
 function stop()
     windower.ffxi.run(false)
+    running = false
+    running_target = {}
     -- windower.ffxi.follow()
     windower.send_command('setkey r;wait 0.1;setkey r up;wait 0.1;setkey r;wait 0.1;setkey r up')
 end
@@ -370,6 +372,12 @@ function runtopos(x,y)
 	local angle = (math.atan2((y - self_vector.y), (x - self_vector.x))*180/math.pi)*-1
 	windower.ffxi.run((angle):radian())
 end
+
+windower.register_event('status change', function(new, old)
+    if new == 2 then
+        stop()
+    end
+end)
 
 windower.register_event('prerender', function(...)
     -- Aggro tracker
