@@ -381,11 +381,11 @@ function stop()
 end
 
 windower.register_event('load', function()
-    windower.send_command('bind @l input //lz trigger')
+    windower.send_command('bind @z input //lz trigger')
 end)
 windower.register_event('unload', function()
     stop()
-    windower.send_command('unbind @l')
+    windower.send_command('unbind @z')
 end)
 
 function runtopos(x,y)
@@ -407,7 +407,7 @@ windower.register_event('prerender', function(...)
     -- Auto run
     if running then
         pl = windower.ffxi.get_mob_by_index(windower.ffxi.get_player().index or 0)
-        if next(running_target) ~= nil then
+        if pl~=nil and next(running_target) ~= nil then
             local distance = math.sqrt(math.pow(pl.x-running_target.x,2) + math.pow(pl.y-running_target.y,2))
             -- debug(distance)
             if distance > running_target_dist then
