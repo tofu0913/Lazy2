@@ -5,7 +5,7 @@ config = require('config')
 res = require('resources')
 packets = require('packets')
 require('coroutine')
-require('aggro')
+require('mylibs/aggro')
 
 _addon.name = 'lazy'
 _addon.author = 'Cliff, Based version by Brax'
@@ -62,8 +62,6 @@ function handle_mob_dead(id, data, modified, injected, blocked)
 end
 
 windower.register_event('incoming chunk', function(id, data)
-    -- Aggro tracker
-    handle_track_packet(id, data)
     handle_mob_dead(id, data)
 
     if id == 0x028 then
@@ -404,9 +402,6 @@ windower.register_event('status change', function(new, old)
 end)
 
 windower.register_event('prerender', function(...)
-    -- Aggro tracker
-    clean_tracked_actions()
-    
     -- Auto run
     if running then
         pl = windower.ffxi.get_mob_by_index(windower.ffxi.get_player().index or 0)
