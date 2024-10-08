@@ -191,15 +191,18 @@ local function isTargetID(val)
 end
 
 --TODO, cant attack protect
-function Find_Nearest_Target(target)
+function Find_Nearest_Target(setting)
+    targets = string.lower(setting):split('%,')
 	local id_targ = -1
 	local dist_targ = -1
 	local marray = windower.ffxi.get_mob_array()
 	for key,mob in pairs(marray) do
-        if ((cleanAggro and isInAggro(mob.id)) or 
+        pl = windower.ffxi.get_mob_by_index(windower.ffxi.get_player().index or 0)
+        if math.abs(mob['z'] - pl.z) < 5 and
+         ((cleanAggro and isInAggro(mob.id)) or 
         (settings.targetid and isTargetID(string.format('%.3X',mob.index))) or 
         -- (settings.targetid and settings.targetid == string.format('%.3X',mob.index)) or 
-		 (not cleanAggro and ((target == '' and isMob(mob['id'])) or string.lower(mob["name"]) == string.lower(target) or (killAggro and isInAggro(mob.id)))))
+		 (not cleanAggro and ((setting == '' and isMob(mob['id'])) or targets:contains(string.lower(mob["name"])) or (killAggro and isInAggro(mob.id)))))
             and mob["valid_target"] and mob["hpp"] >0 then
 			if dist_targ == -1 then
 				id_targ = key
