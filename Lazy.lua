@@ -6,6 +6,7 @@ res = require('resources')
 packets = require('packets')
 require('coroutine')
 require('mylibs/aggro')
+require('mylibs/utils')
 
 _addon.name = 'lazy'
 _addon.author = 'Cliff, Based version by Brax'
@@ -190,7 +191,7 @@ end
 
 --TODO, cant attack protect
 function Find_Nearest_Target(setting)
-    targets = string.lower(setting):split('%,')
+    targets = string_split(string.lower(setting), '%,')
 	local id_targ = -1
 	local dist_targ = -1
 	local marray = windower.ffxi.get_mob_array()
@@ -200,7 +201,7 @@ function Find_Nearest_Target(setting)
          ((cleanAggro and isInAggro(mob.id)) or 
         (settings.targetid and isTargetID(string.format('%.3X',mob.index))) or 
         -- (settings.targetid and settings.targetid == string.format('%.3X',mob.index)) or 
-		 (not cleanAggro and ((setting == '' and isMob(mob['id'])) or targets:contains(string.lower(mob["name"])) or (killAggro and isInAggro(mob.id)))))
+		 (not cleanAggro and ((setting == '' and isMob(mob['id'])) or array_contains(targets, string.lower(mob["name"])) or (killAggro and isInAggro(mob.id)))))
             and mob["valid_target"] and mob["hpp"] >0 then
 			if dist_targ == -1 then
 				id_targ = key
