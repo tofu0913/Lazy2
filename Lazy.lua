@@ -295,11 +295,12 @@ function Combat()
             setTarget(target, false)
             targetLastChange = os.clock()
             -- log(math.sqrt(target.distance))
-            if usePull and math.sqrt(target.distance) > 7 and math.sqrt(target.distance) < 20 then
+            if usePull and windower.ffxi.get_ability_recasts()[5] == 0 and math.sqrt(target.distance) < 10 then
                 -- log('Pull')
-                TurnToTarget()
-                windower.send_command("input //fsd s; wait 1; input /ra <t>")
-                flag = true
+                -- TurnToTarget()
+                -- windower.send_command("input //fsd s; wait 1; input /ra <t>")
+                windower.send_command(windower.to_shift_jis("wait 1; input /ja 挑発 <t>"))
+                -- flag = true
             elseif math.sqrt(target.distance) <= 7 then
                 -- log('Melee')
                 -- windower.send_command("input /targetbnpc")
