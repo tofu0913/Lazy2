@@ -1,7 +1,7 @@
 <?xml version="1.1" ?>
 <settings>
     <global>
-        <autotarget>false</autotarget>
+        <autotarget>true</autotarget>
         <spell></spell>
         <spell_active>false</spell_active>
         <target />
@@ -10,7 +10,7 @@
     </global>
     <felicya>
         <autotarget>true</autotarget>
-        <target>La Velue</target>
-        <targetid>112,</targetid>
+        <target></target>
+        <!-- <targetid>04E,050</targetid> -->
     </felicya>
 </settings>

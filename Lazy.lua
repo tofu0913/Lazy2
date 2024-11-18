@@ -129,9 +129,10 @@ windower.register_event('addon command', function (...)
 		test()
 	elseif args[1] == "clean" then
         cleanAggro = true
-		-- windower.add_to_chat(2,"....Clean aggro....")
+		windower.add_to_chat(11,"....Clean aggro....")
 	elseif args[1] == "ignoreaggro" then
         killAggro = false
+        windower.add_to_chat(11,"....Ignore Aggro: "..tostring(killAggro))
 	elseif args[1] == "pull" then
         usePull = true
         windower.add_to_chat(2,"....Use RA to pull....")
@@ -146,15 +147,17 @@ windower.register_event('addon command', function (...)
 	elseif args[1] == "autotarget" then
 		if args[2] == "on" then
 			settings.autotarget = true
-			windower.add_to_chat(3,"Autotarget: True")
+			windower.add_to_chat(3,"....Autotarget: True")
 		else
 			settings.autotarget = false
-			windower.add_to_chat(3,"Autotarget: False")
+			windower.add_to_chat(3,"....Autotarget: False")
 		end
 	elseif args[1] == "target" then
 		settings.target = args[2]
+        windower.add_to_chat(2,"....Target updated....")
     elseif args[1] == "dist" then
 		settings.dist = tonumber(args[2])
+        windower.add_to_chat(2,"....Dist updated...."..tonumber(args[2]))
 	end
 end)
 
