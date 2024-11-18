@@ -229,7 +229,7 @@ end
 function Check_Distance()
     target = windower.ffxi.get_mob_by_target('t')
 	local distance = target.distance:sqrt()
-	if distance > 3 and Start_Engine then
+	if (distance > 3 or distance <1) and Start_Engine then
 		TurnToTarget()
 		windower.ffxi.run()
         running_target = target
@@ -301,21 +301,23 @@ function Combat()
                 -- windower.send_command("input //fsd s; wait 1; input /ra <t>")
                 windower.send_command(windower.to_shift_jis("wait 1; input /ja 挑発 <t>"))
                 -- flag = true
-            elseif math.sqrt(target.distance) <= 7 then
+            end
+            if math.sqrt(target.distance) <= 8 then
                 -- log('Melee')
                 -- windower.send_command("input /targetbnpc")
                 -- windower.send_command("wait 1.5;input /attack on")
                 windower.send_command("input /attack on")
-            else
+            end
+            -- if math.sqrt(target.distance) >5 then
                 -- log('Approach')
                 running_target = target
                 if usePull then
-                    running_target_dist = 20
+                    running_target_dist = 10
                 else
                     running_target_dist = 2
                 end
                 running = true
-            end
+            -- end
         elseif not Start_Engine then
             stop()
 		end
@@ -420,6 +422,8 @@ windower.register_event('prerender', function(...)
             -- debug(distance)
             if distance > running_target_dist then
                 runtopos(running_target.x, running_target.y)
+            elseif distance < 1 then
+                windower.send_command('setkey s;wait 1;setkey s up;')
             else
                 windower.ffxi.run(false)
                 running = false
