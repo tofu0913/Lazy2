@@ -35,6 +35,7 @@ defaults.weaponskill = ""
 defaults.weaponskill_active = false
 defaults.autotarget = false
 defaults.target = ""
+defaults.dist = -1
 
 flag = false
 settings = config.load(defaults)
@@ -152,6 +153,8 @@ windower.register_event('addon command', function (...)
 		end
 	elseif args[1] == "target" then
 		settings.target = args[2]
+    elseif args[1] == "dist" then
+		settings.dist = tonumber(args[2])
 	end
 end)
 
@@ -203,13 +206,15 @@ function Find_Nearest_Target(setting)
         -- (settings.targetid and settings.targetid == string.format('%.3X',mob.index)) or 
 		 (not cleanAggro and ((setting == '' and isMob(mob['id'])) or array_contains(targets, string.lower(mob["name"])) or (killAggro and isInAggro(mob.id)))))
             and mob["valid_target"] and mob["hpp"] >0 then
-			if dist_targ == -1 then
-				id_targ = key
-				dist_targ = math.sqrt(mob["distance"])
-			elseif math.sqrt(mob["distance"]) < dist_targ then
-				id_targ = key
-				dist_targ = math.sqrt(mob["distance"])
-			end
+            if settings.dist < 0 or math.sqrt(mob["distance"]) < settings.dist then
+                if dist_targ == -1 then
+                    id_targ = key
+                    dist_targ = math.sqrt(mob["distance"])
+                elseif math.sqrt(mob["distance"]) < dist_targ then
+                    id_targ = key
+                    dist_targ = math.sqrt(mob["distance"])
+                end
+            end
 		end
 	end
     if usePull and dist_targ > 25 then
