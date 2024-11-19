@@ -121,7 +121,7 @@ windower.register_event('addon command', function (...)
         end
 
 	elseif args[1] == "reload" then
-		windower.add_to_chat(2,"....Reloading Config....")
+		windower.add_to_chat(11,"....Reloading Config....")
 		config.reload(settings)
 	elseif args[1] == "save" then
 		config.save(settings,windower.ffxi.get_player().name)
@@ -135,7 +135,7 @@ windower.register_event('addon command', function (...)
         windower.add_to_chat(11,"....Ignore Aggro: "..tostring(killAggro))
 	elseif args[1] == "pull" then
         usePull = true
-        windower.add_to_chat(2,"....Use RA to pull....")
+        windower.add_to_chat(11,"....Use RA to pull....")
 	elseif args[1] == "show" then
 		windower.add_to_chat(11,"Autotarget: "..tostring(settings.autotarget))
 		windower.add_to_chat(11,"Spell: "..settings.spell)
@@ -154,10 +154,10 @@ windower.register_event('addon command', function (...)
 		end
 	elseif args[1] == "target" then
 		settings.target = args[2]
-        windower.add_to_chat(2,"....Target updated....")
+        windower.add_to_chat(11,"....Target updated....")
     elseif args[1] == "dist" then
 		settings.dist = tonumber(args[2])
-        windower.add_to_chat(2,"....Dist updated...."..tonumber(args[2]))
+        windower.add_to_chat(11,"....Dist updated...."..tonumber(args[2]))
 	end
 end)
 
