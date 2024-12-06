@@ -132,7 +132,7 @@ windower.register_event('addon command', function (...)
 		windower.add_to_chat(11,"....Clean aggro....")
 	elseif args[1] == "ignoreaggro" then
         killAggro = false
-        windower.add_to_chat(11,"....Ignore Aggro: "..tostring(killAggro))
+        windower.add_to_chat(11,"....Kill Aggro: "..tostring(killAggro))
 	elseif args[1] == "pull" then
         usePull = true
         windower.add_to_chat(11,"....Use RA to pull....")
