@@ -196,18 +196,22 @@ local function isTargetID(val)
 end
 
 --TODO, cant attack protect
-function Find_Nearest_Target(setting)
-    targets = string_split(string.lower(setting), '%,')
+function Find_Nearest_Target(settings)
+    targets = string_split(string.lower(settings.target), '%,')
 	local id_targ = -1
 	local dist_targ = -1
 	local marray = windower.ffxi.get_mob_array()
 	for key,mob in pairs(marray) do
         pl = windower.ffxi.get_mob_by_index(windower.ffxi.get_player().index or 0)
-        if math.abs(mob['z'] - pl.z) < 5 and
+		blisted = false
+		if settings.blist and settings.blist:contains(mob["name"]) then
+			blisted = true
+		end
+        if math.abs(mob['z'] - pl.z) < 5 and not blisted and
          ((cleanAggro and isInAggro(mob.id)) or 
         (settings.targetid and isTargetID(string.format('%.3X',mob.index))) or 
         -- (settings.targetid and settings.targetid == string.format('%.3X',mob.index)) or 
-		 (not cleanAggro and ((setting == '' and isMob(mob['id'])) or array_contains(targets, string.lower(mob["name"])) or (killAggro and isInAggro(mob.id)))))
+		 (not cleanAggro and ((settings.target == '' and isMob(mob['id'])) or array_contains(targets, string.lower(mob['name'])) or (killAggro and isInAggro(mob.id)))))
             and mob["valid_target"] and mob["hpp"] >0 then
             if settings.dist < 0 or math.sqrt(mob["distance"]) < settings.dist then
                 if dist_targ == -1 then
@@ -287,7 +291,7 @@ function Combat()
 			Cast_Spell(settings.spell)
 		end
 	elseif settings.autotarget == true then
-		local nearest_target = Find_Nearest_Target(settings.target)
+		local nearest_target = Find_Nearest_Target(settings)
 		-- if nearest_target > 0 and Start_Engine then
 		if nearest_target > 0 and Start_Engine and (os.clock()-targetLastChange>2) then
 			-- windower.ffxi.follow(nearest_target)
