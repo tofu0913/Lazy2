@@ -197,6 +197,10 @@ end
 
 --TODO, cant attack protect
 function Find_Nearest_Target(settings)
+	bt = windower.ffxi.get_mob_by_target('bt')
+	if bt and bt["valid_target"] and bt["hpp"] >0 then
+		return bt.index
+	end
     targets = string_split(string.lower(settings.target), '%,')
 	local id_targ = -1
 	local dist_targ = -1
