@@ -17,6 +17,7 @@ Start_Engine = false
 isCasting = false
 cleanAggro = false
 killAggro = true
+btmode = false
 isBusy = 0
 buffactive = {}
 Action_Delay = 2
@@ -100,6 +101,7 @@ function triggerStop()
     Start_Engine = false
     usePull = false
     killAggro = true
+    btmode = false
     stop()
 end
 
@@ -119,6 +121,10 @@ windower.register_event('addon command', function (...)
         else
             triggerStart()
         end
+        
+    elseif S{'bt'}:contains(args[1]) then
+		btmode = true
+		windower.add_to_chat(11,"....BT mode ON....")
 
 	elseif args[1] == "reload" then
 		windower.add_to_chat(11,"....Reloading Config....")
@@ -200,6 +206,9 @@ function Find_Nearest_Target(settings)
 	bt = windower.ffxi.get_mob_by_target('bt')
 	if bt and bt["valid_target"] and bt["hpp"] >0 then
 		return bt.index
+	end
+	if btmode then
+		return 0
 	end
     targets = string_split(string.lower(settings.target), '%,')
 	local id_targ = -1
