@@ -212,7 +212,7 @@ function Find_Nearest_Target(settings)
         (settings.targetid and isTargetID(string.format('%.3X',mob.index))) or 
         -- (settings.targetid and settings.targetid == string.format('%.3X',mob.index)) or 
 		 (not cleanAggro and ((settings.target == '' and isMob(mob['id'])) or array_contains(targets, string.lower(mob['name'])) or (killAggro and isInAggro(mob.id)))))
-            and mob["valid_target"] and mob["hpp"] >0 then
+            and mob["valid_target"] and mob["hpp"] >0  and mob["claim_id"] == 0 then
             if settings.dist < 0 or math.sqrt(mob["distance"]) < settings.dist then
                 if dist_targ == -1 then
                     id_targ = key
