@@ -201,22 +201,6 @@ local function isTargetID(val)
   return false
 end
 
-function getPartyTarget()
-	local pt = windower.ffxi.get_party()
-    for i = 0, 5 do
-        local member = pt['p'..i]
-		if member and member.mob  then
-			if member.mob.status == 1 and member.mob.target_index > 0 then
-				local t = windower.ffxi.get_mob_by_index(member.mob.target_index)
-				if t and t["valid_target"] and t["hpp"] >0 and t['spawn_type']==16 then
-					return member.mob.target_index
-				end
-			end
-		end
-	end
-	return 0
-end
-
 --TODO, cant attack protect
 function Find_Nearest_Target(settings)
 	if btmode then
