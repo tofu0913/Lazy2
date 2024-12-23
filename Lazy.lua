@@ -310,7 +310,7 @@ function Combat()
 				windower.send_command('input /target <bt>')
 			end
             targetLastChange = os.clock()
-			windower.send_command('input /echo '..target.name..','..target.index)
+			-- windower.send_command('input /echo '..target.name..','..target.index)
             -- log(math.sqrt(target.distance))
             if usePull and windower.ffxi.get_ability_recasts()[5] == 0 and math.sqrt(target.distance) < 10 then
                 -- log('Pull')
