@@ -306,7 +306,11 @@ function Combat()
 			-- windower.ffxi.follow(nearest_target)
             target = windower.ffxi.get_mob_by_index(nearest_target)
             setTarget(target, false)
+			if btmode then
+				windower.send_command('input /target <bt>')
+			end
             targetLastChange = os.clock()
+			windower.send_command('input /echo '..target.name..','..target.index)
             -- log(math.sqrt(target.distance))
             if usePull and windower.ffxi.get_ability_recasts()[5] == 0 and math.sqrt(target.distance) < 10 then
                 -- log('Pull')
@@ -319,7 +323,7 @@ function Combat()
                 -- log('Melee')
                 -- windower.send_command("input /targetbnpc")
                 -- windower.send_command("wait 1.5;input /attack on")
-                windower.send_command("input /attack on")
+                windower.send_command("input /attack on; wait 0.5; input /attack on; wait 0.5; input /attack on; wait 0.5;")
             end
             -- if math.sqrt(target.distance) >5 then
                 -- log('Approach')
