@@ -54,7 +54,7 @@ function handle_mob_dead(id, data, modified, injected, blocked)
             -- killedMob = windower.ffxi.get_mob_by_id(target_id).name
             -- log('killed: '..killedMob..' by '..player_id)
             if settings.targetid then
-                windower.send_command('input //sw reset; input //sw start; ')
+                windower.send_command('input //stw reset; input //stw start; ')
             end
             if flag then
                 windower.send_command('input //fsd c')
