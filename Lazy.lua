@@ -242,7 +242,7 @@ end
 function Check_Distance()
     target = windower.ffxi.get_mob_by_target('t')
 	local distance = target.distance:sqrt()
-	if (distance > 3 or distance <1) and Start_Engine then
+	if (distance > 2.9 or distance <1) and Start_Engine then
 		TurnToTarget()
 		windower.ffxi.run()
         running_target = target
