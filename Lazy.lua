@@ -18,6 +18,7 @@ isCasting = false
 cleanAggro = false
 killAggro = true
 btmode = false
+ignore_claim = false
 isBusy = 0
 buffactive = {}
 Action_Delay = 2
@@ -139,6 +140,9 @@ windower.register_event('addon command', function (...)
 	elseif args[1] == "ignoreaggro" then
         killAggro = false
         windower.add_to_chat(11,"....Kill Aggro: "..tostring(killAggro))
+	elseif args[1] == "ignoreclaim" then
+        ignore_claim = true
+        windower.add_to_chat(11,"....Ignore claim: "..tostring(ignore_claim))
 	elseif args[1] == "pull" then
         usePull = true
         windower.add_to_chat(11,"....Use RA to pull....")
@@ -221,7 +225,7 @@ function Find_Nearest_Target(settings)
         (settings.targetid and isTargetID(string.format('%.3X',mob.index))) or 
         -- (settings.targetid and settings.targetid == string.format('%.3X',mob.index)) or 
 		 (not cleanAggro and ((settings.target == '' and isMob(mob['id'])) or array_contains(targets, string.lower(mob['name'])) or (killAggro and isInAggro(mob.id)))))
-            and mob["valid_target"] and mob["hpp"] >0  and mob["claim_id"] == 0 then
+            and mob["valid_target"] and mob["hpp"] >0  and (ignore_claim or mob["claim_id"] == 0) then
             if settings.dist < 0 or math.sqrt(mob["distance"]) < settings.dist then
                 if dist_targ == -1 then
                     id_targ = key
